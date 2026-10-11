@@ -10,6 +10,13 @@ insurance analysis services, API, interface, and automated tests. External
 libraries, regulatory source material, and hosted AI services are identified
 separately from the code in this repository.
 
+## Workflow at a glance
+
+![Conceptual flow from insurance documents and financial data to broker review](docs/images/review-flow.svg)
+
+This is a conceptual walkthrough of the two analysis paths and the broker
+review step, not a screenshot or a claim of automated insurance decisions.
+
 ---
 
 ## Architecture
