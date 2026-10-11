@@ -1,0 +1,162 @@
+﻿{% extends "base.html" %}
+{% block title %}Knowledge Base — InsureIntel{% endblock %}
+
+{% block content %}
+<div class="p-6 space-y-6">
+  <div class="flex items-center justify-between">
+    <div style="display:flex;align-items:center;gap:0.75rem">
+      <a href="/home" class="btn btn-ghost btn-sm">
+        <span class="material-symbols-outlined text-[16px]">arrow_back</span>Back
+      </a>
+      <div>
+        <h2 class="text-2xl font-bold font-headline" style="color:var(--cos)">Knowledge Base</h2>
+        <p class="text-sm mt-0.5" style="color:var(--cosv)">IPEC regulations, policy guides, and insurance reference
+          materials.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search -->
+  <form method="GET" action="/knowledge-base" class="flex items-center gap-3 p-4 rounded-xl"
+    style="background:var(--csf);border:1px solid color-mix(in srgb,var(--col) 50%,transparent)">
+    <span class="material-symbols-outlined text-xl" style="color:var(--cp)">search</span>
+    <input type="text" name="q" class="form-input flex-1"
+      value="{{ search_query or '' }}"
+      placeholder="Search the knowledge base — regulations, clauses, definitions…">
+    <select name="category" class="form-input" style="width:auto;min-width:160px">
+      <option value="">All Categories</option>
+      <option value="ipec_circulars" {% if selected_category == 'ipec_circulars' %}selected{% endif %}>IPEC Circulars</option>
+      <option value="ipec_directives" {% if selected_category == 'ipec_directives' %}selected{% endif %}>IPEC Directives</option>
+      <option value="regulatory_guides" {% if selected_category == 'regulatory_guides' %}selected{% endif %}>Regulatory Guides</option>
+      <option value="policy_wordings" {% if selected_category == 'policy_wordings' %}selected{% endif %}>Policy Wordings</option>
+      <option value="insurance_documents" {% if selected_category == 'insurance_documents' %}selected{% endif %}>Insurance Documents</option>
+      <option value="templates_returns" {% if selected_category == 'templates_returns' %}selected{% endif %}>Templates & Returns</option>
+    </select>
+    <button type="submit" class="btn btn-primary btn-sm">Search</button>
+  </form>
+
+  <!-- Categories -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    {% for stat in category_stats %}
+    <div class="stat-card cursor-pointer hover:border-primary/40 transition-all"
+      style="border:1px solid color-mix(in srgb,var(--col) 50%,transparent)">
+      <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-3" style="background:{{ stat.color }}">
+        <span class="material-symbols-outlined text-xl" style="color:var(--cp)">{{ stat.icon }}</span>
+      </div>
+      <p class="text-xl font-bold font-headline" style="color:var(--cos)">{{ stat.count }}</p>
+      <p class="text-sm font-medium mt-0.5" style="color:var(--cosv)">{{ stat.label }}</p>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Featured Articles -->
+    <div class="lg:col-span-2 space-y-4">
+      <h3 class="font-semibold font-headline" style="color:var(--cos)">Featured Source Materials</h3>
+      {% for item in featured_articles %}
+      <a href="{{ item.href }}" target="_blank" rel="noopener" class="block rounded-xl p-5 cursor-pointer transition-all hover:border-primary/40"
+        style="background:var(--csf);border:1px solid color-mix(in srgb,var(--col) 50%,transparent)">
+        <div class="flex items-start justify-between gap-4">
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="badge badge-gold text-[10px]">{{ item.category }}</span>
+            </div>
+            <h4 class="font-semibold text-sm mb-1" style="color:var(--cos)">{{ item.title }}</h4>
+            <p class="text-xs leading-relaxed" style="color:var(--cosv)">{{ item.description }}</p>
+            <div class="flex items-center gap-4 mt-3 text-xs" style="color:var(--cosv)">
+              <span><span class="material-symbols-outlined text-[12px]">folder</span> {{ item.source_path }}</span>
+              <span><span class="material-symbols-outlined text-[12px]">data_object</span> {{ item.file_size_kb }} KB</span>
+            </div>
+          </div>
+          <span class="material-symbols-outlined text-xl flex-shrink-0 mt-1" style="color:var(--cp)">open_in_new</span>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+
+    <!-- Recent + Quick Links -->
+    <div class="space-y-4">
+      <div class="rounded-xl p-5"
+        style="background:var(--csf);border:1px solid color-mix(in srgb,var(--col) 50%,transparent)">
+        <h3 class="font-semibold font-headline mb-4" style="color:var(--cos)">Quick Reference</h3>
+        <div class="space-y-2">
+          {% for item in quick_references %}
+          <a href="{{ item.href }}" target="_blank" rel="noopener"
+            class="flex items-center gap-2.5 p-2 rounded-lg text-sm transition-all hover:bg-primary/5">
+            <span class="material-symbols-outlined text-[16px]" style="color:var(--cp)">article</span>
+            <span class="min-w-0">
+              <span class="block" style="color:var(--cos)">{{ item.title }}</span>
+              <span class="block text-[11px] truncate" style="color:var(--cosv)">{{ item.source_name }}</span>
+            </span>
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="rounded-xl p-5"
+        style="background:var(--csf);border:1px solid color-mix(in srgb,var(--col) 50%,transparent)">
+        <h3 class="font-semibold font-headline mb-3" style="color:var(--cos)">Ask the Knowledge Base</h3>
+        <p class="text-xs mb-3" style="color:var(--cosv)">Use the AI-powered Q&A to search the prepared source
+          corpus.</p>
+        <textarea class="form-input text-sm" rows="3"
+          placeholder="e.g. What are the IPEC grace period requirements for fire insurance?"></textarea>
+        <button id="kb-ask-btn" onclick="askKnowledgeBase(); return false;" class="btn btn-primary w-full mt-3"><span
+            class="material-symbols-outlined text-[16px]">psychology</span><span>Ask AI</span></button>
+        <div id="kb-answer" class="hidden mt-3 rounded-lg p-3 text-xs leading-relaxed"
+          style="background:color-mix(in srgb,var(--cp) 8%,transparent);border:1px solid color-mix(in srgb,var(--cp) 25%,transparent);color:var(--cos)">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  "use strict";
+  function esc(s) {
+    return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  async function askKnowledgeBase() {
+    const q = document.querySelector('textarea[placeholder]')?.value?.trim();
+    if (!q) { showErrorModal('Please enter a question before asking the AI.'); return; }
+    const box = document.getElementById('kb-answer');
+    const btn = document.getElementById('kb-ask-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span style="animation:spin 1s linear infinite;display:inline-block">hourglass_empty</span><span>Searching...</span>';
+    if (box) {
+      box.classList.remove('hidden');
+      box.innerHTML = 'Searching prepared knowledge corpus...';
+    }
+    try {
+      const data = await apiFetch('/api/knowledge-base/ask', { method: 'POST', body: JSON.stringify({ question: q }) });
+      const sources = Array.isArray(data.sources) ? data.sources : [];
+      const excerpts = Array.isArray(data.source_excerpts) ? data.source_excerpts : [];
+      const confidence = typeof data.confidence === 'number'
+        ? `<div style="margin-top:0.75rem;color:var(--cosv)">Confidence: ${Math.round(data.confidence * 100)}%</div>`
+        : '';
+      if (box) box.innerHTML = `
+        <div style="font-weight:700;margin-bottom:0.45rem;color:var(--cos)">Answer</div>
+        <div style="white-space:pre-wrap;color:var(--cosv)">${esc(data.answer || 'No answer returned.')}</div>
+        ${sources.length ? `<div style="margin-top:0.75rem;font-weight:700;color:var(--cos)">Sources</div>
+          <ul style="margin:0.35rem 0 0;padding-left:1rem;color:var(--cosv)">${sources.map(s => `<li>${esc(s)}</li>`).join('')}</ul>` : ''}
+        ${excerpts.length ? `<div style="margin-top:0.75rem;font-weight:700;color:var(--cos)">Matched excerpts</div>
+          <div style="display:grid;gap:0.45rem;margin-top:0.4rem">${excerpts.slice(0, 3).map(item => `
+            <div style="padding:0.55rem 0.65rem;border-radius:8px;background:rgba(255,255,255,0.04)">
+              <div style="font-weight:700;color:var(--cos)">${esc(item.title)}</div>
+              <div style="margin-top:0.2rem;color:var(--cosv)">${esc(item.excerpt)}</div>
+            </div>`).join('')}</div>` : ''}
+        ${confidence}
+      `;
+    } catch (e) {
+      if (box) box.innerHTML = `<span style="color:#f87171">Knowledge base query failed: ${esc(e.message)}</span>`;
+      showErrorModal('Knowledge base query failed: ' + e.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<span class="material-symbols-outlined text-[16px]">psychology</span><span>Ask AI</span>';
+    }
+  }
+</script>
+<style>@keyframes spin { from{transform:rotate(0)} to{transform:rotate(360deg)} }</style>
+{% endblock %}
